@@ -3,6 +3,7 @@ import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 
+# Load environment variables from .env file
 load_dotenv()
 
 # Configure Gemini API
@@ -12,10 +13,12 @@ model = genai.GenerativeModel('gemini-2.0-flash')
 def main():
     st.title("Interactive Story Generator")
 
+    # Initialize session state for tracking story state
     if 'story_state' not in st.session_state:
         st.session_state.story_state = {}
         initialize_story()
 
+    # Display current story state and handle user input
     display_current_state()
     handle_user_input()
 
@@ -70,5 +73,7 @@ def generate_next_text(choice):
     st.session_state.story_state['history'].append(response.text)
     generate_next_choices(st.session_state.story_state['story_text'])
 
+# Run Streamlit app and bind it to Heroku's $PORT
 if __name__ == "__main__":
-    main()
+    import streamlit.web.bootstrap as bootstrap
+    bootstrap.run()
