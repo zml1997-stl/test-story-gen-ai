@@ -1,6 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 import os
+import json
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -50,9 +51,9 @@ def display_genre_options():
     response = model.generate_content(prompt)
 
     try:
-        # Evaluate the response text, it should be a valid dictionary
-        genre_options = eval(response.text)  # Convert the string to a dictionary
-        
+        # Attempt to parse the response as JSON
+        genre_options = json.loads(response.text)  # Parse the JSON response
+
         if isinstance(genre_options, dict):
             # Display genre options to the user
             genre_choice = st.radio("Choose a genre for your story:", list(genre_options.keys()))
@@ -73,6 +74,9 @@ def display_genre_options():
         else:
             raise ValueError("Unexpected format for genre options")
 
+    except json.JSONDecodeError as e:
+        st.error(f"Error parsing genre options: {e}")
+        st.write(f"Response from Gemini: {response.text}")
     except Exception as e:
         st.error(f"Error generating genre options: {e}")
         st.write(f"Response from Gemini: {response.text}")
@@ -107,9 +111,9 @@ def generate_next_choices(text):
     prompt = f"Given the following story text: '{text}', generate 4 distinct choices the user could make to continue the story. Return them as a python list of strings."
     response = model.generate_content(prompt)
     try:
-        choices = eval(response.text)
+        choices = json.loads(response.text)  # Parse the JSON response
         st.session_state.story_state['choices'] = choices
-    except:
+    except json.JSONDecodeError:
         st.session_state.story_state['choices'] = ["Continue the story in a new direction."]
 
 def generate_next_text(choice):
