@@ -37,20 +37,21 @@ def display_genre_options():
     # Ask Gemini to generate 4 random genres with descriptions
     prompt = """
     Generate 4 random story genres (e.g., Mystery, Fantasy, Sci-Fi, Romance) with a brief description for each. 
-    Format the response as a dictionary, where each key is the genre name and each value is the genre description. 
-    For example, the response should look like:
+    Format the response as a dictionary with genre names as keys and their descriptions as values. 
+    Example response format:
     {
-        "Mystery": "A detective story about a missing person.",
-        "Fantasy": "A tale of a young wizard in a magical kingdom.",
-        "Sci-Fi": "A futuristic adventure involving space exploration.",
-        "Romance": "A love story between two people from different worlds."
+        "Mystery": "A gripping detective story.",
+        "Fantasy": "An epic adventure in a magical world.",
+        "Sci-Fi": "A futuristic space adventure.",
+        "Romance": "A heartfelt love story."
     }
+    Please provide only the dictionary in the response without any additional code or explanation.
     """
     response = model.generate_content(prompt)
 
     try:
-        # Assuming Gemini's response is in the expected format
-        genre_options = eval(response.text)  # This will throw an error if the response is not valid
+        # Evaluate the response text, it should be a valid dictionary
+        genre_options = eval(response.text)  # Convert the string to a dictionary
         
         if isinstance(genre_options, dict):
             # Display genre options to the user
